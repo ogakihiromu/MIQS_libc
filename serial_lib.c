@@ -15,17 +15,18 @@
 
 /////////////////////////
 //*serial_tx_reg_check
-// this function is returning reg full(1) or not full(0).
-// 
+// This function informs whether the transmit register of the UART is full or not.
+// If the register is full, return 1. Otherwise, return 0.
+//
 int Uart_tx_enable()
 {
     volatile int *txd_stat = (int*) UART_LITE_STAT;
-    return (txd_stat & UART_LITE_TXF);
+    return (*txd_stat & UART_LITE_TXF);
 }
 
 void Uart_putChar(unsigned char val)
 {
-    volatile unsigned *e_txd = (unsigned char*) UART_LITE_TXD_ADDR;
+    volatile unsigned char *e_txd = (unsigned char*) UART_LITE_TXD_ADDR;
     while(!Uart_tx_enable())
         ;
     *e_txd = val;
