@@ -18,12 +18,17 @@ ENTRY(_start)
 /*SEARCH_DIR("/usr/local/riscv-tools/riscv32-unknown-elf/lib");*/
 SEARCH_DIR(".");
 
+MEMORY {
+  IMEM (xw): ORIGIN = 0x00000000, LENGTH = 64K
+  DMEM (xw): ORIGIN = 0x00010000, LENGTH = 512K
+}
+
 SECTIONS
 {
-  . = 0x00400000;       /* start address */
+  . = 0x00000000;       /* start address */
   /* Read-only sections, merged into text segment: */
-  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000));
-   . = SEGMENT_START("text-segment", 0x10000)/*+ SIZEOF_HEADERS*/;
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x00000));
+   . = SEGMENT_START("text-segment", 0x00000)/*+ SIZEOF_HEADERS*/;
    .startup        : { startup.o(.text)}
   .interp         : { *(.interp) }
   .note.gnu.build-id : { *(.note.gnu.build-id) }
@@ -75,7 +80,7 @@ SECTIONS
     *(.text .stub .text.* .gnu.linkonce.t.*)
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
-  }
+  } > IMEM
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
@@ -165,7 +170,7 @@ SECTIONS
   {
     *(.data .data.* .gnu.linkonce.d.*)
     SORT(CONSTRUCTORS)
-  }
+  } > DMEM
   .data1          : { *(.data1) }
   .got            : { *(.got.plt) *(.igot.plt) *(.got) *(.igot) }
   /* We want the small data sections together, so single-instruction offsets
