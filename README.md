@@ -16,8 +16,9 @@ MIQSの入出力周りを動作させるためのライブラリ。vivadoでメ�
 ## 実行方法
 makeと打てば、main.coeが生成される。
 ## 注意点
-- makeで生成されたcoeファイルをそのまま[riscv_miqs_v1.0](https://github.com/project-hagane/MIQS/tree/master/hw/riscv_miqs_v1.0)で実行するとハザードが原因で動作が止まる(詳しくは[こちら](https://github.com/PEARLabo/diary/blob/master/hiromu/202308.md#202384)を参照)。下記の逆アセンブル結果部分の94行目と98行目をmain.coeで探して、nop命令00000013で上書きしてください。  
-この動作の停止はいつか直す...。
+- ~~makeで生成されたcoeファイルをそのまま[riscv_miqs_v1.0](https://github.com/project-hagane/MIQS/tree/master/hw/riscv_miqs_v1.0)で実行するとハザードが原因で動作が止まる(詳しくは[こちら](https://github.com/PEARLabo/diary/blob/master/hiromu/202308.md#202384)を参照)。下記の逆アセンブル結果部分のアドレス94番目と98番目をmain.coeで探して、nop命令00000013で上書きしてください。Uart_tx_enableとUart_rx_enableのどちらの関数にも  sw 	x15,-20(x8)とlw	x15,-20(x8)の連続した操作はあるので上書きしてください~~  
+~~この動作の停止はいつか直す...。~~  
+-O最適化オプションつけてコンパイルしたら無駄なスタック操作がなくなった。もし最適化かけずにserial_lib.cを再コンパイルしたかったら、上記の注意点の通りの操作を行ってください。
 ```
 00000080 <Uart_tx_enable>:
   80:	fe010113          	addi	x2,x2,-32
